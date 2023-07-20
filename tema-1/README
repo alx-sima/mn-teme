@@ -1,0 +1,162 @@
+#### Sima Alexandru (312CA)
+
+# Tema 1: Metode Numerice Matriceale
+
+## Markov is coming ...
+
+### Funcții
+
+- `parse_labyrinth`: Citește matricea labirintului dintr-un fișier.
+- `get_adjacency_matrix`: Generează matricea de adiacență a labirintului
+- `get_link_matrix`: Calculează matricea de legaturi
+- `get_Jacobi_parameters`: Împarte matricea de legături, pentru a putea fi
+  aplicată metoda Jacobi pe ea.
+- `perform_iterative`: Folosind metoda Jacobi, calculează iterativ
+  probabilitățile fiecărui pătrățel să ducă la ieșire.
+- `heuristic_greedy`: Caută o cale spre ieșire.
+- `decode_path`: Decodifică pozițiile pătrățelelor din calea spre ieșire.
+
+### Descriere
+
+- Programul incepe prin citirea unei matrici de labirint dintr-un fișier dat.
+
+- După aceea, se construiește matricea de adiacență, aceasta fiind o matrice
+  pătratică ce are pe laturi `n*m + 2` elemente (conținând toate pătratele
+  labirintului + încă 2 stări: `win` și `lose`) și se decodifică pozițiile
+  pereților, reprezentate prin biții setați ai numerelor din matricea labirint.
+
+- Matricea de legături reprezintă șansa să se ajungă din pătrățelul `i` pe
+  pătrățelul `j`, adică 1 / numărul de legături de pe linii, mai exact 1 / suma
+  liniei (toate elementele sunt 0/1).
+
+- Parametrii pentru metoda Jacobi sunt obținuți prin partiționarea matricei de
+  legături, astfel:
+
+  - Matricea de iterație este reprezentată de legăturile dintre poziții;
+  - Termenul liber este reprezentat de legăturile de ieșire în starea `win`.
+
+- Având formate matricele pentru metoda Jacobi, se aplică algoritmul până la
+  obținerea unei erori acceptabile.
+
+- Obținând probabilitățile, se aplică greedy, construindu-se o stivă cu traseul
+  vizitat, căutându-se vecinul cu probabilitatea cea mai mare.
+
+  - Pentru a verifica vecinii disponibili nevizitați, m-am folosit de faptul că
+    vectorul de adiacență al poziției și vectorul de poziții vizitate conțin
+    doar valori de 0/1, produsul Hadamard al acestora va reprezenta operația
+    `AND` între valori. Înmulțind acest rezultat cu vectorul de probabilități,
+    se șterg probabilitățile pătrățelelor pe care nu se poate ajunge (devin 0).
+    Astfel, se poate calcula foarte ușor indicele probabilității maximale.
+
+- În final, se transformă coordonatele traseului în perechi `(linie, coloană)`.
+
+---
+
+## Linear Regression
+
+### Funcții
+
+- Funcții de citire:
+
+  - `parse_csv_file`: Citește vectorul de ieșiri și matricea de caracteristici
+    dintr-un fisier csv.
+  - `parse_data_set_file`: Citește vectorul de ieșiri și matricea de
+    caracteristici dintr-un fișier plain-text.
+
+- Funcții pentru calculul coeficienților:
+
+  - `gradient_descent`: Calculează coeficienții Theta după un anumit număr de
+    iterații, aplicând metoda gradientului descendent.
+  - `normal_equation`: Calculează coeficienții Theta dupa un anumit număr de
+    iterații, aplicând metoda gradientului conjugat, daca matricea dată este
+    pozitiv definită.
+
+- Funcții de cost:
+
+  - `lasso_regression_cost_function`: Funcție de cost care calculează eroarea
+    folosind lasso regression.
+  - `linear_regression_cost_function`: Funcție de cost care calculează eroarea
+    folosind linear regression.
+  - `ridge_regression_cost_function`: Funcție de cost care calculează eroarea
+    folosind ridge regression.
+
+- Funcții utilitare:
+  - `prepare_for_regression`: Convertește stringurile din matricea de
+    caracteristici în valori numerice, pentru a putea fi procesată.
+  - `positive_definite`: Verifică dacă matricea este pozitiv definită.
+
+### Descriere
+
+- Datele de intrare sunt citite din fișiere text sau csv, fiecare linie
+  conținând ieșirea, apoi caracteristicile.
+
+- După citire, se prelucrează matricea de caracteristici, transformându-se
+  valorile textuale în corespondentele lor numerice.
+
+- Apoi, se aproximează coeficienții `Theta`, aplicând metoda gradientului
+  conjugat sau a gradientului descendent, folosind formulele.
+
+  - Atât în cazul gradientului descendent, cât și în calculul erorilor, se poate
+    vectoriza suma h(x) pe linii, deoarece, înmulțind matricea caracteristicilor
+    cu Theta (adunând separat primul element, deoarece acesta este termenul
+    liber), se obține un vector care conține exact sumele cerute.
+  - Gradientul conjugat se poate aplica doar pe matrice pozitiv definite, iar
+    acest lucru se verifică prin calcularea tuturor determinanților care încep
+    din stânga-sus, impunându-se ca toți să fie pozitivi.
+
+- Pentru a se verifica coeficienții se pot folosi diferite funcții de cost, care
+  calculează eroarea acestora, folosind formulele date.
+
+---
+
+## MNIST 101
+
+### Funcții
+
+- `load_dataset`: Încarcă matricea de caracteristici și vectorul de ieșiri
+  dintr-un fișier mat.
+- `split_dataset`: Se amestecă datele și se împart in date de antrenament și
+  date de test.
+- `initialize_weights`: Generează valori aleatoare pentru ponderile inițiale.
+- `unfold_weights`: Functie ajutătoare care extrage matricele `Theta` dintr-un
+  vector.
+- `forward_propagation`: Trece matricea de caracteristici prin rețeaua
+  neuronală, aplicând, pentru fiecare strat, transformarea acestuia, apoi
+  funcția sigmoid.
+- `predict_classes`: Aplică forward-propagation și prezice valorile.
+- `cost_function`: Calculează costul, prezicând valorile cu ajutorul
+  forward-propagation și calculând eroarea față de valorile așteptate, apoi
+  gradientul, aplicând back-propagation.
+
+### Descriere
+
+- Se încarcă un set de date dintr-un fisier `.mat`.
+
+- Se împart datele în date de antrenament și date de test, generându-se o
+  permutare aleatoare a `1:n` și indexându-se liniile datelor cu aceasta, pentru
+  a amesteca liniile, apoi selectându-se un procent din acestea ca fiind date de
+  antrenament, restul rămânând date de test.
+
+- Se populează matricele de coeficienți cu valori aleatoare în intervalul
+  `(-eps, eps)`. Deoarece funcția `rand` generează numere în intervalul
+  `(0, 1)`, acesta trebuie scalat, pentru a deveni `(0, 2eps)`, iar apoi
+  translatat la stânga.
+
+- Predicțiile se fac trecând prin rețeaua neuronală, astfel:
+
+  - Se aplică prima funcție de tranziție (corespunzând lui `Theta1`);
+  - Se aplică funcția `sigmoid`;
+  - Se aplică a 2-a tranziție (coresponzând lui `Theta2`);
+  - Se aplică funcția `sigmoid` din nou;
+  - Valoarea prezisă este cea cu ponderea cea mai mare.
+
+  - Ca și la regresia liniară, aceste operații pot fi vectorizate, devenind
+    simple înmulțiri de matrice (sau sigmoide aplicate pe funcții).
+
+- Se poate determina eroarea coeficienților printr-o funcție de cost,
+  aplicându-se **forward propagation**, apoi calculându-se eroarea între
+  valorile prezise și cele reale. Tot în această funcție se pot calcula
+  gradienții celor 2 `Theta`, aplicându-se **back propagation** și formulele de
+  calcul.
+  - Calculul erorii se poate vectoriza, folosindu-ne de faptul că produsul
+    scalar al unor matrice este egal cu produsul scalar pe fiecare linie.

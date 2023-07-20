@@ -1,0 +1,130 @@
+% Copyright (C) 2023 Alexandru Sima (312CA) %
+\documentclass{article}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[romanian]{babel}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+
+
+\begin{document}
+
+\pagestyle{fancy}
+\begin{titlepage}
+      \begin{center}
+            Universitatea POLITEHNICA din București \\
+            Facultatea de Automatică și Calculatoare \\[5px]
+            \includegraphics[width=1.2cm]{upb.jpg}
+            \includegraphics[width=1.2cm]{acs.jpg}
+
+            \vfill
+            {\huge\bf Metode Numerice - Tema 2}
+            \vfill
+            Alexandru Sima (312CA) \\
+            \small\today
+      \end{center}
+\end{titlepage}
+
+\fancyhead[L]{Metode Numerice - Tema 2}
+\fancyhead[R]{Alexandru Sima(312CA)}
+\urlstyle{style=normal}
+\tableofcontents
+\newpage
+
+\section{Compresia imaginilor folosind SVD (Task 1)}
+
+\subsection{Descriere}
+Compresia imaginilor folosind SVD presupune aflarea descompunerii SVD a matricei
+asociate imaginii, reținerea primelor $k$ valori singulare și reasamblarea
+imaginii.
+
+\subsection{Algoritm}
+\begin{itemize}
+      \item Se calculează descompunerea SVD a matricei asociate imaginii.
+      \item Se rețin primele $k$ valori singulare.
+      \item Se asamblează imaginea aproximată, folosind valorile singulare
+            reținute.
+\end{itemize}
+
+\section{Compresia imaginilor folosind analiza componentelor principale (Task 2)}
+
+\subsection{Descriere}
+Compresia imaginilor folosind analiza componentelor principale presupune aflarea
+matricei componentelor principale, reținerea primelor $k$ componente principale
+și reasamblarea imaginii.
+
+\subsection{Algoritm}
+\begin{itemize}
+      \item Se normalizează fiecare rând al matricei (adică se scade din fiecare
+            pixel media rândului pe care se află, fiecare rând având acum media
+            0).
+      \item Se construiește matricea Z.
+      \item Se calculează matricea de componente principale a matricei Z (V din
+            descompunerea SVD).
+      \item Se rețin primele $k$ componente principale.
+      \item Se reconstruiește matricea aproximativă.
+\end{itemize}
+
+\section{Compresia imaginilor folosind analiza componentelor principale și a
+  matricei de covarianță (Task 3)}
+
+\subsection{Descriere}
+Compresia imaginilor presupune aflarea matricei de covarianță asociată imaginii,
+reținerea vectorilor proprii asociați celor mai mari valori proprii și
+reasamblarea imaginii.
+
+\subsection{Algoritm}
+\begin{itemize}
+      \item Se normalizează fiecare rând al matricei.
+      \item Se calculează matricea de covarianță a imaginii.
+      \item Se calculează vectorii și valorile proprii ale matricei de
+            covarianță.
+      \item Se sortează vectorii proprii descrescător după valorile proprii.
+            Pentru aceasta, se sortează valorile proprii și se păstrează indicii
+            originali, apoi se indexează matricea vectorilor proprii folosind
+            acești indici.
+      \item Se rețin primii $k$ vectori proprii.
+      \item Se asamblează imaginea aproximată, folosind vectorii proprii
+            reținuți.
+      \item Se denormalizează imaginea.
+\end{itemize}
+
+\section{Recunoașterea cifrelor scrise de mână (Task 4)}
+
+\subsection{Fișiere}
+\begin{itemize}
+      \item $prepare_data$: Încarcă setul de date MNIST și îl împarte în
+            setul de antrenare și cel de testare.
+      \item $visualise_image$: Afișează o imagine din setul de date.
+      \item $magic_with_pca$: Calculează matricea $train$, aproximând, folosind
+            matricea de covarianță, imaginile de antrenament.
+      \item $prepare_photo$: Pregătește imaginea pentru clasificare.
+      \item $KNN$: Calculează distanța euclidiană între imaginea de test și
+            matricea de antrenament, predicția fiind cifra asociată medianei
+            celor mai mari $k$ distanțe.
+      \item $classifyImage$: Clasifică imaginile din baza de date MNIST,
+            asamblând funcțiile de mai sus.
+\end{itemize}
+
+\subsection{Descriere}
+\begin{itemize}
+      \item Pentru a realiza clasificări ale imaginilor, se antrenează un model
+            folosind o parte a setului de date, aproximându-se imaginile
+            folosind descompunerea în valori singulare a matricelor de
+            covarianță ale matricelor imaginilor.
+      \item Pentru clasificările propriu-zise, se calculează distanțele între
+            imaginea de clasificat și cele de test, imaginea revenind clasei
+            imaginii față de care distanța este mediana tutoror distanțelor.
+\end{itemize}
+
+\subsection{Algoritm}
+\begin{itemize}
+      \item Se încarcă setul de date.
+      \item Se împarte în date de antrenament și de test.
+      \item Se calculează matricea de antrenament, aproximându-se imaginile.
+      \item Se clasifică imaginile de test, calculându-se distanțele până la
+            imaginile din matricea de antrenament și se alege clasa medianei
+            primelor $k$ distanțe.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,10 @@
+/Digit Recognition - */
+/in/
+/out/
+/ref/
+
+*.mat
+*.pdf
+*.zip
+checker.m
+
